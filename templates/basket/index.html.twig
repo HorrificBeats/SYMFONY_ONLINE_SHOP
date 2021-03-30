@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+SymfonySHOP - Cart
+{% endblock %}
+{% block body %}
+<div class="container">
+    <h1 class="bg-light p-4 ">Cart</h1>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Article</th>
+                <th scope="col">Prix unitaire (€)</th>
+                <th scope="col">Quantité</th>
+                <th scope="col">Prix (€)</th>
+                <th scope="col">Supprimer</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if lines %}      {# Ca sa nu dea eroare daca este GOL #}
+            {% for orderline in lines %}        {# Pt. a citi tot din sesiune #}
+                <tr>
+                    <td scope="row"><img src="{{ asset('image/'~ orderline.getImage) }}" height="53"></td>
+                            {# ^^ Adauga file-name intr-un search spre un PATH #}
+                    <td>{{ orderline.getName }}</td>
+                            {# ^^ Foloseste functii GET pt a extra date dintr-un OBJECT #}
+                    {# Pret UNITAR #}        
+                    <td>{{ orderline.getPrice|number_format(2) }}</td>
+
+                    {# + QUANTITY #}
+                        <td><a href="{{ path('modifOne', {'id' : orderline.getId, 'price' : orderline.getPrice, 'action' : -1 })}}" class="btn btn-sm" title="Ajouter">
+                            <img src="/image/icons-moins-30.png"></a>
+                    {# Quantity per Item #}
+                        <span  style="width:50px"> {{ app.session.get('basket').basketLines[orderline.getId] }}</span> 
+
+                    {# - QUANTITY #}
+                        <a href="{{ path('modifOne', {'id' : orderline.getId, 'price' : orderline.getPrice, 'action' : 1 })}}" class="btn btn-sm" title="Soustraire">
+                            <img src="/image/icons-plus-30.png"></a></td>
+                    {# Pret FULL #}
+                        <td>{{ (orderline.getPrice * app.session.get('basket').basketLines[orderline.getId])|number_format(2) }}</td>
+                                                                    {# ^^^ #}   {# ^^^ #}   {# ^^^ #}
+
+                    {# DELETE #}    
+                        <td><a href="{{ path('delete', {'id' : orderline.getId, 'price' : orderline.getPrice })}}" class="btn btn-sm" title="Supprimer">
+                            <img src="{{ asset('image/del.png') }}" class="ml-3"></a></td>
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td  height="53" colspan = "3"></td>
+                <td>Total :</td>
+                <td  class="ml-3">{{ app.session.get('basket').total|number_format(2) }} €</td>
+                                                     {# ^^^ #}
+                <td></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">Aucun article</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+    
+    {# ??? #}
+    {% if app.session.get('amount') %}<p class="text-right mr-5"><b>Total : </b>{{app.session.get('amount')}} €</p>{% endif %}
+    <div class="text-right"><a href="
+
+
+    {# ORDER Now BTN #}
+        {% if is_granted("ROLE_USER") %}
+            {{ path('app_login') }}
+        {% else %}
+            {{ path('app_login') }}
+        {% endif %}
+    " class=""><input type="button" class="btn btn-green" value="Commander"></a></div>
+    </div>
+{% endblock %}
+
+
+
+
